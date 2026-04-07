@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import './VoicePanel.css'
+import { Play, SlidersHorizontal } from 'lucide-react'
 
 const VOICE_TABS = ['通用音色', '我创建的']
 
@@ -13,21 +14,7 @@ const VOICES = [
   { id: 6, name: '通用男声', tags: [], emotions: ['中性'] },
 ]
 
-const IcoPlay = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11">
-    <path d="M8 5v14l11-7z"/>
-  </svg>
-)
-
-const IcoSliders = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="11" height="11">
-    <line x1="4" y1="6" x2="20" y2="6"/>
-    <line x1="8" y1="12" x2="16" y2="12"/>
-    <line x1="6" y1="18" x2="18" y2="18"/>
-  </svg>
-)
-
-function ConfigPopover({ voice, speed, volume, emotion, onSpeed, onVolume, onEmotion, onConfirm, anchorEl, onClose }) {
+function ConfigPopover({ voice, speed, volume, emotion, onSpeed, onVolume, onEmotion, anchorEl, onClose }) {
   const popRef = useRef(null)
   const [pos, setPos] = useState({ top: -9999, left: -9999 })
 
@@ -87,7 +74,6 @@ function ConfigPopover({ voice, speed, volume, emotion, onSpeed, onVolume, onEmo
           </div>
         </div>
       )}
-      <button className="vp-confirm-btn" onClick={onConfirm}>确认</button>
     </div>,
     document.body
   )
@@ -106,10 +92,16 @@ export default function VoicePanel({ value, onChange }) {
   const selectedVoice = VOICES.find(v => v.id === selectedId) || VOICES[0]
   const configVoice = VOICES.find(v => v.id === openConfigId)
 
+  const notify = useCallback((overrides = {}) => {
+    onChange?.({ ...selectedVoice, speed, volume, emotion, ...overrides })
+  }, [selectedVoice, speed, volume, emotion, onChange])
+
   const handleSelectVoice = (voice) => {
     setSelectedId(voice.id)
-    setEmotion(voice.emotions[0] || '中性')
+    const em = voice.emotions[0] || '中性'
+    setEmotion(em)
     if (openConfigId !== voice.id) setOpenConfigId(null)
+    onChange?.({ ...voice, speed, volume, emotion: em })
   }
 
   const handleToggleConfig = (e, voice) => {
@@ -117,10 +109,9 @@ export default function VoicePanel({ value, onChange }) {
     setOpenConfigId(prev => prev === voice.id ? null : voice.id)
   }
 
-  const handleConfirm = useCallback(() => {
-    onChange?.({ ...selectedVoice, speed, volume, emotion })
-    setOpenConfigId(null)
-  }, [selectedVoice, speed, volume, emotion, onChange])
+  const handleSpeed = (v) => { setSpeed(v); notify({ speed: v }) }
+  const handleVolume = (v) => { setVolume(v); notify({ volume: v }) }
+  const handleEmotion = (em) => { setEmotion(em); notify({ emotion: em }) }
 
   const closePopover = useCallback(() => setOpenConfigId(null), [])
 
@@ -140,7 +131,7 @@ export default function VoicePanel({ value, onChange }) {
             className={`vp-card ${selectedId === v.id ? 'selected' : ''}`}
             onClick={() => handleSelectVoice(v)}
           >
-            <div className="vp-avatar"><IcoPlay/></div>
+            <div className="vp-avatar"><Play size={11} fill="currentColor"/></div>
             <div className="vp-card-body">
               <span className="vp-card-name">{v.name}</span>
               <div className="vp-card-tags">
@@ -153,7 +144,7 @@ export default function VoicePanel({ value, onChange }) {
                 className={`vp-config-btn ${openConfigId === v.id ? 'active' : ''}`}
                 onClick={e => handleToggleConfig(e, v)}
               >
-                <IcoSliders/>
+                <SlidersHorizontal size={11}/>
               </button>
             )}
           </div>
@@ -166,10 +157,9 @@ export default function VoicePanel({ value, onChange }) {
           speed={speed}
           volume={volume}
           emotion={emotion}
-          onSpeed={setSpeed}
-          onVolume={setVolume}
-          onEmotion={setEmotion}
-          onConfirm={handleConfirm}
+          onSpeed={handleSpeed}
+          onVolume={handleVolume}
+          onEmotion={handleEmotion}
           anchorEl={configBtnRefs.current[openConfigId]}
           onClose={closePopover}
         />

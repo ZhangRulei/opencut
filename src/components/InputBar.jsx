@@ -1,6 +1,10 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import './InputBar.css'
 import VoicePanel from './VoicePanel'
+import {
+  Type, Image, Video, Mic, User, Layers, Clock, Upload,
+  AtSign, ChevronDown, Check, RotateCcw, Sparkles
+} from 'lucide-react'
 
 const GEN_TYPES = ['文案写作', '图片生成', '视频生成', '语音合成', '数字人']
 const IMAGE_MODELS = ['图片5.0 Lite', '图片5.0 Pro', 'Nano banana2']
@@ -24,95 +28,7 @@ const QUALITIES = [
   { label: '超清 4K', value: '4k', premium: true },
 ]
 
-const svgProps = {
-  viewBox: '0 0 24 24',
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: '1.9',
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
-  width: 13,
-  height: 13,
-}
-
-const IcoText = () => (
-  <svg {...svgProps}>
-    <path d="M5 18l4.2-12h1.6L15 18"/>
-    <path d="M7.2 12.3h5.6"/>
-    <path d="M17.5 7.5h1.5M17.5 11.5h1.5M17.5 15.5h1.5"/>
-  </svg>
-)
-
-const IcoImage = () => (
-  <svg {...svgProps}>
-    <rect x="4" y="5" width="16" height="14" rx="3"/>
-    <circle cx="9" cy="10" r="1.6"/>
-    <path d="M20 16l-4.8-4.8L8 18"/>
-  </svg>
-)
-
-const IcoVideo = () => (
-  <svg {...svgProps}>
-    <rect x="3" y="6" width="13" height="12" rx="2.5"/>
-    <path d="M16 10l5-3v10l-5-3"/>
-  </svg>
-)
-
-const IcoVoice = () => (
-  <svg {...svgProps}>
-    <rect x="9" y="4" width="6" height="10" rx="3"/>
-    <path d="M5 10a7 7 0 0014 0M12 17v3M8 20h8"/>
-  </svg>
-)
-
-const IcoDigital = () => (
-  <svg {...svgProps}>
-    <rect x="5" y="3" width="14" height="18" rx="4"/>
-    <circle cx="12" cy="10" r="2.5"/>
-    <path d="M9 16.5a4.2 4.2 0 016 0"/>
-  </svg>
-)
-
-const IcoModel = () => (
-  <svg {...svgProps}>
-    <path d="M4 8l8-4 8 4-8 4-8-4z"/>
-    <path d="M4 12l8 4 8-4"/>
-    <path d="M4 16l8 4 8-4"/>
-  </svg>
-)
-
-const IcoDuration = () => (
-  <svg {...svgProps}>
-    <circle cx="12" cy="12" r="8"/>
-    <path d="M12 8v4l3 2"/>
-  </svg>
-)
-
-const IcoUpload = () => (
-  <svg {...svgProps}>
-    <path d="M12 16V6M8.5 9.5L12 6l3.5 3.5"/>
-    <path d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1"/>
-  </svg>
-)
-
-const IcoAt = () => (
-  <svg {...svgProps}>
-    <circle cx="12" cy="12" r="4"/>
-    <path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.92 7.94"/>
-  </svg>
-)
-
-const IcoChevron = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="10" height="10">
-    <path d="M6 9l6 6 6-6"/>
-  </svg>
-)
-
-const IcoCheck = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="12" height="12">
-    <path d="M20 6L9 17l-5-5"/>
-  </svg>
-)
+const svgProps = { size: 13, strokeWidth: 1.9 }
 
 function RatioIcon({ value, size = 13 }) {
   const map = {
@@ -139,20 +55,18 @@ function RatioIcon({ value, size = 13 }) {
 function UploadSlot({ label }) {
   return (
     <button className="upload-slot" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-        <path d="M12 5v14M5 12h14"/>
-      </svg>
+      <Upload size={16} strokeWidth={1.8}/>
       <span>{label}</span>
     </button>
   )
 }
 
 function getGenTypeIcon(type) {
-  if (type === '文案写作') return <IcoText/>
-  if (type === '图片生成') return <IcoImage/>
-  if (type === '视频生成') return <IcoVideo/>
-  if (type === '语音合成') return <IcoVoice/>
-  return <IcoDigital/>
+  if (type === '文案写作') return <Type {...svgProps}/>
+  if (type === '图片生成') return <Image {...svgProps}/>
+  if (type === '视频生成') return <Video {...svgProps}/>
+  if (type === '语音合成') return <Mic {...svgProps}/>
+  return <User {...svgProps}/>
 }
 
 export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
@@ -275,19 +189,25 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
           {isVoiceMode && (
             <div className="gen-type-wrap">
               <div className="voice-preview-card" onClick={() => setShowVoicePanel(v => !v)}>
+                <div className="voice-preview-glow"/>
                 <div className="voice-preview-cover">
-                  <svg viewBox="0 0 36 24" fill="none" width="36" height="24">
-                    <rect x="0" y="9" width="3" height="6" rx="1.5" fill="rgba(255,255,255,0.6)"/>
-                    <rect x="5" y="5" width="3" height="14" rx="1.5" fill="rgba(255,255,255,0.8)"/>
-                    <rect x="10" y="2" width="3" height="20" rx="1.5" fill="rgba(255,255,255,0.95)"/>
-                    <rect x="15" y="6" width="3" height="12" rx="1.5" fill="rgba(255,255,255,0.8)"/>
-                    <rect x="20" y="9" width="3" height="6" rx="1.5" fill="rgba(255,255,255,0.6)"/>
-                    <rect x="25" y="4" width="3" height="16" rx="1.5" fill="rgba(255,255,255,0.75)"/>
-                    <rect x="30" y="8" width="3" height="8" rx="1.5" fill="rgba(255,255,255,0.55)"/>
+                  <svg viewBox="0 0 40 26" fill="none" width="40" height="26">
+                    <rect x="0"  y="11" width="3" height="4"  rx="1.5" fill="rgba(255,255,255,0.4)"/>
+                    <rect x="5"  y="7"  width="3" height="12" rx="1.5" fill="rgba(255,255,255,0.6)"/>
+                    <rect x="10" y="3"  width="3" height="20" rx="1.5" fill="rgba(255,255,255,0.9)"/>
+                    <rect x="15" y="8"  width="3" height="10" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+                    <rect x="20" y="5"  width="3" height="16" rx="1.5" fill="rgba(255,255,255,0.85)"/>
+                    <rect x="25" y="9"  width="3" height="8"  rx="1.5" fill="rgba(255,255,255,0.6)"/>
+                    <rect x="30" y="6"  width="3" height="14" rx="1.5" fill="rgba(255,255,255,0.75)"/>
+                    <rect x="35" y="10" width="3" height="6"  rx="1.5" fill="rgba(255,255,255,0.45)"/>
                   </svg>
                 </div>
                 <span className="voice-preview-name">{selectedVoice.name}</span>
-                <button type="button" className="voice-play">▶</button>
+                <div className="voice-play-btn">
+                  <svg viewBox="0 0 10 10" fill="currentColor" width="8" height="8">
+                    <path d="M2 1.5l6 3.5-6 3.5z"/>
+                  </svg>
+                </div>
               </div>
               {showVoicePanel && (
                 <div className="gentype-float-panel voice-float-panel">
@@ -306,7 +226,11 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
             className="prompt-input"
             placeholder={placeholder}
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={e => {
+              setText(e.target.value)
+              e.target.style.height = 'auto'
+              e.target.style.height = e.target.scrollHeight + 'px'
+            }}
             onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
@@ -341,7 +265,7 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
               }}>
                 {getGenTypeIcon(genType)}
                 <span>{genType}</span>
-                <IcoChevron/>
+                <ChevronDown size={10} strokeWidth={2}/>
               </button>
 
               {showGenType && (
@@ -351,7 +275,7 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
                     <button key={type} className={`model-item ${genType === type ? 'active' : ''}`} onClick={() => selectGenType(type)}>
                       {getGenTypeIcon(type)}
                       <span>{type}</span>
-                      {genType === type && <span className="check-ml"><IcoCheck/></span>}
+                      {genType === type && <span className="check-ml"><Check size={12} strokeWidth={2}/></span>}
                     </button>
                   ))}
                 </div>
@@ -362,7 +286,7 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
 
             {isTextMode && (
               <button className="flat-btn">
-                <IcoModel/>
+                <Layers {...svgProps}/>
                 <span>DINESSR智能助手</span>
               </button>
             )}
@@ -371,7 +295,7 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
               <>
                 <div className="gen-type-wrap">
                   <button className={`flat-btn is-selected ${showModel ? 'open' : ''}`} onClick={() => { setShowGenType(false); setShowRatio(false); setShowQuality(false); setShowModel(v => !v) }}>
-                    <IcoModel/>
+                    <Layers {...svgProps}/>
                     <span>{imageModel}</span>
                   </button>
                   {showModel && (
@@ -379,9 +303,9 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
                       <p className="panel-label">选择模型</p>
                       {IMAGE_MODELS.map(m => (
                         <button key={m} className={`model-item ${imageModel === m ? 'active' : ''}`} onClick={() => { setImageModel(m); setShowModel(false) }}>
-                          <IcoModel/>
+                          <Layers {...svgProps}/>
                           <span>{m}</span>
-                          {imageModel === m && <span className="check-ml"><IcoCheck/></span>}
+                          {imageModel === m && <span className="check-ml"><Check size={12} strokeWidth={2}/></span>}
                         </button>
                       ))}
                     </div>
@@ -408,7 +332,7 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
                 </div>
                 <div className="gen-type-wrap">
                   <button className={`flat-btn ${showQuality ? 'open' : ''}`} onClick={() => { setShowGenType(false); setShowModel(false); setShowRatio(false); setShowQuality(v => !v) }}>
-                    <IcoDuration/>
+                    <Clock {...svgProps}/>
                     <span>{quality === '4k' ? '超清4K' : '高清2K'}</span>
                   </button>
                   {showQuality && (
@@ -425,7 +349,7 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
                   )}
                 </div>
                 <button className="flat-btn">
-                  <IcoAt/>
+                <AtSign {...svgProps}/>
                 </button>
               </>
             )}
@@ -434,7 +358,7 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
               <>
                 <div className="gen-type-wrap">
                   <button className={`flat-btn is-selected ${showModel ? 'open' : ''}`} onClick={() => { setShowGenType(false); setShowRatio(false); setShowModel(v => !v) }}>
-                    <IcoModel/>
+                    <Layers {...svgProps}/>
                     <span>{videoModel}</span>
                   </button>
                   {showModel && (
@@ -442,25 +366,25 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
                       <p className="panel-label">选择模型</p>
                       {VIDEO_MODELS.map(m => (
                         <button key={m} className={`model-item ${videoModel === m ? 'active' : ''}`} onClick={() => { setVideoModel(m); setShowModel(false) }}>
-                          <IcoModel/>
+                          <Layers {...svgProps}/>
                           <span>{m}</span>
-                          {videoModel === m && <span className="check-ml"><IcoCheck/></span>}
+                          {videoModel === m && <span className="check-ml"><Check size={12} strokeWidth={2}/></span>}
                         </button>
                       ))}
                     </div>
                   )}
                 </div>
                 <button className="flat-btn" onClick={() => setFrameMode(frameMode === '首尾帧' ? '全能参考' : '首尾帧')}>
-                  <IcoImage/>
+                  <Image {...svgProps}/>
                   <span>{frameMode}</span>
-                  <IcoChevron/>
+                  <ChevronDown size={10} strokeWidth={2}/>
                 </button>
                 <button className={`flat-btn ${showRatio ? 'open' : ''}`} onClick={() => { setShowGenType(false); setShowModel(false); setShowRatio(v => !v) }}>
                   <RatioIcon value={ratio} size={12}/>
                   <span>{ratio}</span>
                 </button>
                 <button className="flat-btn" onClick={() => setDuration(duration === '4s' ? '8s' : '4s')}>
-                  <IcoDuration/>
+                  <Clock {...svgProps}/>
                   <span>{duration}</span>
                 </button>
               </>
@@ -469,11 +393,11 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
             {isDigitalMode && (
               <>
                 <button className="flat-btn" onClick={() => setDigitalMode(digitalMode === '快速模式' ? '专业模式' : '快速模式')}>
-                  <IcoModel/>
+                  <Layers {...svgProps}/>
                   <span>{digitalMode}</span>
                 </button>
                 <button className="flat-btn">
-                  <IcoUpload/>
+                  <Upload {...svgProps}/>
                   <span>上传音频</span>
                 </button>
               </>
@@ -481,11 +405,8 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
           </div>
 
           <div className="toolbar-right">
-            <span className="credit-count">✦ {isVideoMode ? '44' : isImageMode ? '0/张' : '0'}</span>
             <button className={`send-btn ${text.trim() || motionText.trim() ? 'ready' : ''}`} onClick={handleGenerate}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="15" height="15">
-                <path d="M12 19V5M5 12l7-7 7 7"/>
-              </svg>
+              <Sparkles size={15} strokeWidth={1.9}/>
             </button>
           </div>
         </div>

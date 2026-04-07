@@ -62,6 +62,7 @@
   background: var(--bg-active);
 }
 
+
 .vp-avatar {
   width: 36px;
   height: 36px;
@@ -75,7 +76,7 @@
 }
 
 .vp-card.selected .vp-avatar {
-  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  background: linear-gradient(135deg, #6b7280, #4b5563);
 }
 
 .vp-card-body {
@@ -135,8 +136,7 @@
   display: flex;
   flex-direction: column;
   gap: 11px;
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
   z-index: 9999;
   min-width: 240px;
 }
@@ -157,7 +157,7 @@
 .vp-slider {
   flex: 1;
   height: 4px;
-  accent-color: var(--accent);
+  accent-color: #6b7280;
   cursor: pointer;
 }
 
@@ -199,15 +199,15 @@
 }
 
 .vp-emotion-btn.active {
-  background: var(--accent-soft);
-  border-color: rgba(239, 93, 78, 0.35);
-  color: var(--accent);
+  background: var(--bg-active);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
 }
 
 .vp-confirm-btn {
   align-self: flex-end;
   padding: 5px 18px;
-  background: var(--accent);
+  background: #4b5563;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -218,5 +218,5 @@
 }
 
 .vp-confirm-btn:hover {
-  background: var(--accent-hover);
+  background: #374151;
 }

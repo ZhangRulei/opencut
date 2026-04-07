@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import './AssetPanel.css'
+import { Folder, MoreHorizontal, Plus, Search, Pencil, Upload, Download, Move, Trash2, Video, Image, Music } from 'lucide-react'
 
 const TABS = ['全部', '视频', '图片', '音频']
 const TYPE_MAP = { MP4: '视频', mp4: '视频', jpg: '图片', png: '图片', mp3: '音频', wav: '音频', pdf: '文档' }
@@ -30,43 +31,12 @@ const FOLDER_FILES = {
   ],
 }
 
-const IcoFolder = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
-    <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
-  </svg>
-)
-
-const IcoMore = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-    <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
-  </svg>
-)
-
-const IcoPlus = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13">
-    <path d="M12 5v14M5 12h14"/>
-  </svg>
-)
-
-const IcoSearch = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
-    <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
-  </svg>
-)
-
-const IcoEdit = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13">
-    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-  </svg>
-)
-
-const IcoUpload = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="13" height="13">
-    <path d="M12 16V6M8.5 9.5L12 6l3.5 3.5"/>
-    <path d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1"/>
-  </svg>
-)
+const IcoFolder = () => <Folder size={14} strokeWidth={1.6}/>
+const IcoMore = () => <MoreHorizontal size={14} strokeWidth={1.6}/>
+const IcoPlus = () => <Plus size={13} strokeWidth={2}/>
+const IcoSearch = () => <Search size={14} strokeWidth={1.8}/>
+const IcoEdit = () => <Pencil size={13} strokeWidth={1.6}/>
+const IcoUpload = () => <Upload size={13} strokeWidth={1.6}/>
 
 function AudioCover() {
   return (
@@ -115,19 +85,19 @@ function CardMoreMenu({ onRename, onDownload, onMove, onDelete }) {
       {open && (
         <div className="card-context-menu">
           <button className="card-ctx-item" onClick={() => { onRename?.(); setOpen(false) }}>
-            <svg viewBox="0 0 16 16" fill="currentColor" width="11" height="11"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61z"/></svg>
+            <Pencil size={11} strokeWidth={1.6}/>
             重命名
           </button>
           <button className="card-ctx-item" onClick={() => { onDownload?.(); setOpen(false) }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="11" height="11"><path d="M12 16V4M8 12l4 4 4-4"/><path d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1"/></svg>
+            <Download size={11} strokeWidth={1.8}/>
             下载
           </button>
           <button className="card-ctx-item" onClick={() => { onMove?.(); setOpen(false) }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="11" height="11"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>
+            <Move size={11} strokeWidth={1.8}/>
             移动
           </button>
           <button className="card-ctx-item danger" onClick={() => { onDelete?.(); setOpen(false) }}>
-            <svg viewBox="0 0 16 16" fill="currentColor" width="11" height="11"><path d="M6.5 1.75a.25.25 0 01.25-.25h2.5a.25.25 0 01.25.25V3h-3V1.75zm4.5 0V3h2.25a.75.75 0 010 1.5H.75a.75.75 0 010-1.5H3V1.75C3 .784 3.784 0 4.75 0h6.5C12.216 0 13 .784 13 1.75zM4.496 6.675L4.75 12.5h6.5l.254-5.825A.75.75 0 0112.996 6h.004a.75.75 0 01.75.75v.075l-.27 6.175A1.75 1.75 0 0111.73 14.5H4.27a1.75 1.75 0 01-1.75-1.5L2.25 6.825A.75.75 0 013 6.075h.004a.75.75 0 01.746.6z"/></svg>
+            <Trash2 size={11} strokeWidth={1.6}/>
             删除
           </button>
         </div>
@@ -155,7 +125,7 @@ function DetailModal({ file, onClose }) {
       <div className="detail-modal" onClick={e => e.stopPropagation()}>
         <div className="detail-media">
           <button className="detail-close" onClick={onClose}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="14" height="14"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            <Trash2 size={14} strokeWidth={2}/>
             关闭
           </button>
           {isVideo && (
@@ -182,21 +152,9 @@ function DetailModal({ file, onClose }) {
         </div>
         <div className="detail-panel">
           <div className="detail-panel-header">
-            {isVideo && (
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                <rect x="2" y="7" width="15" height="10" rx="2"/><path d="M17 9l5-2v10l-5-2"/>
-              </svg>
-            )}
-            {isImage && (
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
-              </svg>
-            )}
-            {isAudio && (
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-              </svg>
-            )}
+            {isVideo && <Video size={16} strokeWidth={1.6} color="var(--accent)"/>}
+            {isImage && <Image size={16} strokeWidth={1.6} color="var(--accent)"/>}
+            {isAudio && <Music size={16} strokeWidth={1.6} color="var(--accent)"/>}
             <span>{label}详情</span>
           </div>
           <div className="detail-panel-body">
@@ -229,9 +187,7 @@ function DetailModal({ file, onClose }) {
           </div>
           <div className="detail-panel-footer">
             <button className="detail-download-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
-                <path d="M12 16V4M8 12l4 4 4-4"/><path d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1"/>
-              </svg>
+              <Download size={14} strokeWidth={1.8}/>
               下载{label}
             </button>
           </div>
@@ -394,11 +350,11 @@ export default function AssetPanel() {
               {folderMenu === f.id && (
                 <div className="folder-context-menu">
                   <button className="card-ctx-item" onClick={() => setFolderMenu(null)}>
-                    <svg viewBox="0 0 16 16" fill="currentColor" width="11" height="11"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61z"/></svg>
+                    <Pencil size={11} strokeWidth={1.6}/>
                     重命名
                   </button>
                   <button className="card-ctx-item danger" onClick={() => { deleteFolder(f.id); setFolderMenu(null) }}>
-                    <svg viewBox="0 0 16 16" fill="currentColor" width="11" height="11"><path d="M6.5 1.75a.25.25 0 01.25-.25h2.5a.25.25 0 01.25.25V3h-3V1.75zm4.5 0V3h2.25a.75.75 0 010 1.5H.75a.75.75 0 010-1.5H3V1.75C3 .784 3.784 0 4.75 0h6.5C12.216 0 13 .784 13 1.75zM4.496 6.675L4.75 12.5h6.5l.254-5.825A.75.75 0 0112.996 6h.004a.75.75 0 01.75.75v.075l-.27 6.175A1.75 1.75 0 0111.73 14.5H4.27a1.75 1.75 0 01-1.75-1.5L2.25 6.825A.75.75 0 013 6.075h.004a.75.75 0 01.746.6z"/></svg>
+                    <Trash2 size={11} strokeWidth={1.6}/>
                     删除
                   </button>
                 </div>

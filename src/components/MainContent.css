@@ -115,8 +115,9 @@
 
 .message-meta {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
+  min-width: 0;
 }
 
 .msg-avatar {
@@ -125,6 +126,7 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .msg-avatar img {
@@ -133,14 +135,23 @@
   object-fit: cover;
 }
 
-.msg-prompt {
+.msg-prompt-wrap {
+  flex: 1;
+  min-width: 0;
   font-size: 13px;
   color: var(--text-secondary);
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.msg-prompt {
+  display: inline;
 }
 
 .msg-tags {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 6px;
 }
 
