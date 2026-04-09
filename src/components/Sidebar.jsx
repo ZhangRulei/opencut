@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import './Sidebar.css'
 import logoImg from '../assets/logo.png'
-import { Copy, Scissors, Star, Folder, BookOpen, Sun, Moon, LogOut } from 'lucide-react'
+import { Copy, Scissors, Star, Folder, BookOpen, Sun, Moon, LogOut, Users } from 'lucide-react'
 
 const menuItems = [
   { label: '复刻', icon: <Copy size={17} strokeWidth={1.5}/>, iconActive: <Copy size={17} strokeWidth={2}/> },
@@ -9,9 +9,11 @@ const menuItems = [
   { label: '生成', icon: <Star size={17} strokeWidth={1.5}/>, iconActive: <Star size={17} strokeWidth={2} fill="currentColor"/> },
   { label: '资产', icon: <Folder size={17} strokeWidth={1.5}/>, iconActive: <Folder size={17} strokeWidth={2} fill="currentColor"/> },
   { label: '知识库', icon: <BookOpen size={17} strokeWidth={1.5}/>, iconActive: <BookOpen size={17} strokeWidth={2}/> },
+  { label: '技能', icon: <Star size={17} strokeWidth={1.5}/>, iconActive: <Star size={17} strokeWidth={2}/> },
+  { label: '团队', icon: <Users size={17} strokeWidth={1.5}/>, iconActive: <Users size={17} strokeWidth={2}/> },
 ]
 
-export default function Sidebar({ activeMenu, onMenuChange, darkMode, onToggleDark }) {
+export default function Sidebar({ activeMenu, onMenuChange, darkMode, onToggleDark, onLogout }) {
   const [logoError, setLogoError] = useState(false)
   const [avatarOpen, setAvatarOpen] = useState(false)
   const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 })
@@ -75,7 +77,7 @@ export default function Sidebar({ activeMenu, onMenuChange, darkMode, onToggleDa
           </div>
           {avatarOpen && (
             <div className="avatar-popover" style={{ position: 'fixed', top: popoverPos.top, left: popoverPos.left }}>
-              <button className="avatar-popover-item logout" onClick={() => setAvatarOpen(false)}>
+              <button className="avatar-popover-item logout" onClick={() => { setAvatarOpen(false); onLogout?.() }}>
                 <LogOut size={14} strokeWidth={1.6}/>
                 退出登录
               </button>

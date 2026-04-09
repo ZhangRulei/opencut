@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import './AssetPanel.css'
-import { Folder, MoreHorizontal, Plus, Search, Pencil, Upload, Download, Move, Trash2, Video, Image, Music } from 'lucide-react'
+import { Folder, MoreHorizontal, Plus, Search, Pencil, Upload, Download, Move, Trash2, Video, Image, Music, FileText } from 'lucide-react'
 
 const TABS = ['全部', '视频', '图片', '音频']
 const TYPE_MAP = { MP4: '视频', mp4: '视频', jpg: '图片', png: '图片', mp3: '音频', wav: '音频', pdf: '文档' }
@@ -41,16 +41,11 @@ const IcoUpload = () => <Upload size={13} strokeWidth={1.6}/>
 function AudioCover() {
   return (
     <div className="asset-cover cover-audio">
-      <svg viewBox="0 0 48 32" fill="none" width="64" height="42">
-        <rect x="0" y="14" width="4" height="4" rx="2" fill="rgba(255,255,255,0.5)"/>
-        <rect x="6" y="10" width="4" height="12" rx="2" fill="rgba(255,255,255,0.65)"/>
-        <rect x="12" y="6" width="4" height="20" rx="2" fill="rgba(255,255,255,0.8)"/>
-        <rect x="18" y="2" width="4" height="28" rx="2" fill="rgba(255,255,255,0.95)"/>
-        <rect x="24" y="8" width="4" height="16" rx="2" fill="rgba(255,255,255,0.8)"/>
-        <rect x="30" y="12" width="4" height="8" rx="2" fill="rgba(255,255,255,0.65)"/>
-        <rect x="36" y="10" width="4" height="12" rx="2" fill="rgba(255,255,255,0.5)"/>
-        <rect x="42" y="14" width="4" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
-      </svg>
+      <div className="audio-disc">
+        <div className="audio-disc-inner">
+          <Music size={18} strokeWidth={1.5} color="rgba(255,255,255,0.95)"/>
+        </div>
+      </div>
     </div>
   )
 }
@@ -60,10 +55,17 @@ function FileCover({ type }) {
   const isVideo = type === 'MP4' || type === 'mp4'
   const isDoc = type === 'pdf' || type === 'doc'
   const isFolder = type === 'folder'
-  const label = isVideo ? 'VIDEO' : isDoc ? 'word/pdf封面' : isFolder ? '文件夹封面' : '图片'
+  const cls = isVideo ? 'cover-video' : isDoc ? 'cover-doc' : isFolder ? 'cover-folder' : 'cover-image'
+  const icon = isVideo
+    ? <Video size={22} strokeWidth={1.4} color="rgba(255,255,255,0.85)"/>
+    : isDoc
+    ? <FileText size={22} strokeWidth={1.4} color="rgba(255,255,255,0.85)"/>
+    : isFolder
+    ? <Folder size={22} strokeWidth={1.4} color="rgba(255,255,255,0.85)"/>
+    : <Image size={22} strokeWidth={1.4} color="rgba(255,255,255,0.85)"/>
   return (
-    <div className={`asset-cover ${isVideo ? 'cover-video' : isDoc ? 'cover-doc' : isFolder ? 'cover-folder' : 'cover-image'}`}>
-      <span className="cover-label">{label}</span>
+    <div className={`asset-cover ${cls}`}>
+      {icon}
     </div>
   )
 }
@@ -216,7 +218,7 @@ function AssetCard({ file, onOpen }) {
   )
 }
 
-function FolderView({ folder, onBack }) {
+function FolderView({ folder, onBack, onOpen }) {
   const files = FOLDER_FILES[folder.id] || []
   const groups = files.reduce((acc, f) => {
     if (!acc[f.group]) acc[f.group] = []
@@ -273,7 +275,7 @@ function FolderView({ folder, onBack }) {
               <button className="group-expand-btn">全部展开 (999) ›</button>
             </div>
             <div className="asset-grid">
-              {groupFiles.map(f => <AssetCard key={f.id} file={f}/>)}
+              {groupFiles.map(f => <AssetCard key={f.id} file={f} onOpen={onOpen}/>)}
             </div>
           </div>
         ))}
@@ -365,7 +367,7 @@ export default function AssetPanel() {
       </aside>
 
       {currentFolder ? (
-        <FolderView folder={currentFolder} onBack={() => setActiveFolder('all')}/>
+        <FolderView folder={currentFolder} onBack={() => setActiveFolder('all')} onOpen={setDetailFile}/>
       ) : (
         <div className="asset-main">
           <div className="asset-toolbar">
@@ -388,7 +390,7 @@ export default function AssetPanel() {
                 <div key={group} className="asset-group">
                   <p className="asset-group-label">{group}</p>
                   <div className="asset-grid">
-                    {files.map(f => <AssetCard key={f.id} file={f}/>)}
+                    {files.map(f => <AssetCard key={f.id} file={f} onOpen={setDetailFile}/>)}
                   </div>
                 </div>
               ))
@@ -396,6 +398,7 @@ export default function AssetPanel() {
           </div>
         </div>
       )}
+      {detailFile && <DetailModal file={detailFile} onClose={() => setDetailFile(null)}/>}
     </div>
   )
 }
