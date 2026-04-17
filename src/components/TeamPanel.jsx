@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './TeamPanel.css'
-import { X, Users } from 'lucide-react'
+import { X, Users, ChevronDown, Copy, Check, Play, Pause } from 'lucide-react'
 
 const PERMISSIONS = ['爆款复刻', '混剪管理', '素材生成', '资产管理', '知识库管理', '技能管理', '团队管理']
 
@@ -344,17 +344,330 @@ function OperationLog() {
   )
 }
 
-export default function TeamPanel() {
-  const [tab, setTab] = useState('members')
-  const [members, setMembers] = useState(MOCK_MEMBERS)
+function GenerationRecords() {
+  const [subTab, setSubTab] = useState('material')
+
+  return (
+    <div className="team-content">
+      <div className="sub-tabs">
+        <button className={`sub-tab ${subTab === 'material' ? 'active' : ''}`} onClick={() => setSubTab('material')}>素材生成</button>
+        <button className={`sub-tab ${subTab === 'voice' ? 'active' : ''}`} onClick={() => setSubTab('voice')}>音色克隆</button>
+      </div>
+      {subTab === 'material' ? <MaterialGeneration/> : <VoiceClone/>}
+    </div>
+  )
+}
+
+function MaterialGeneration() {
+  const [search, setSearch] = useState('')
+  const [typeFilter, setTypeFilter] = useState('')
+  const [showToast, setShowToast] = useState(false)
+
+  const handleCopy = (text, e) => {
+    e.stopPropagation()
+    navigator.clipboard.writeText(text)
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 2000)
+  }
+
+  return (
+    <div className="team-content">
+      {showToast && (
+        <div className="copy-toast">
+          <Check size={14} strokeWidth={2}/>
+          复制成功
+        </div>
+      )}
+      <div className="team-toolbar">
+        <input className="team-search-input" placeholder="请输入账户名称或手机号" value={search} onChange={e => setSearch(e.target.value)}/>
+        <select className="team-select" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+          <option value="">生成类型</option>
+          <option value="图片生成">图片生成</option>
+          <option value="视频生成">视频生成</option>
+        </select>
+        <button className="btn-query">查询</button>
+      </div>
+      <table className="team-table">
+        <thead>
+          <tr>
+            <th>用户</th><th>生成类型</th><th>生成命令</th><th>生成状态</th><th>生成内容</th><th>消耗积分</th><th>时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div className="member-cell">
+                <span className="member-avatar member-avatar-letter">张</span>
+                <div>
+                  <div className="member-name">张三</div>
+                  <div className="member-phone">15927002756</div>
+                </div>
+              </div>
+            </td>
+            <td>图片生成</td>
+            <td>
+              <div className="command-cell" onClick={(e) => handleCopy('帮我生成一只小猫，参考命令1', e)}>
+                <span className="command-text">帮我生成一只小猫，参考命令1</span>
+                <div className="command-tooltip">帮我生成一只小猫，参考命令1</div>
+              </div>
+            </td>
+            <td><span className="status-tag success">已生成</span></td>
+            <td>
+              <div className="gen-preview">
+                <div className="gen-preview-img">🖼️</div>
+                <span>Nano banana2 pro</span>
+              </div>
+            </td>
+            <td>1</td>
+            <td>2025-03-04 12:03</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function VoiceClone() {
+  const [search, setSearch] = useState('')
+  const [playingId, setPlayingId] = useState(null)
+
+  const handlePlay = (id) => {
+    if (playingId === id) {
+      setPlayingId(null)
+    } else {
+      setPlayingId(id)
+      // 模拟播放，实际应该播放音频
+      setTimeout(() => setPlayingId(null), 3000)
+    }
+  }
+
+  return (
+    <div className="team-content">
+      <div className="team-toolbar">
+        <input className="team-search-input" placeholder="请输入账户名称或手机号" value={search} onChange={e => setSearch(e.target.value)}/>
+        <button className="btn-query">查询</button>
+      </div>
+      <table className="team-table">
+        <thead>
+          <tr>
+            <th>用户</th><th>音色名称</th><th>参考音色</th><th>示例音色</th><th>克隆状态</th><th>消耗积分</th><th>时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div className="member-cell">
+                <span className="member-avatar member-avatar-letter">张</span>
+                <div>
+                  <div className="member-name">张三</div>
+                  <div className="member-phone">15927002756</div>
+                </div>
+              </div>
+            </td>
+            <td>猫七七阿姨-直播</td>
+            <td>
+              <div className="voice-sample" onClick={() => handlePlay('ref1')}>
+                <button className="voice-play-icon">
+                  {playingId === 'ref1' ? <Pause size={12} strokeWidth={2}/> : <Play size={12} strokeWidth={2}/>}
+                </button>
+                <span>猫七七阿姨配音 00：03</span>
+              </div>
+            </td>
+            <td>
+              <div className="voice-sample" onClick={() => handlePlay('demo1')}>
+                <button className="voice-play-icon">
+                  {playingId === 'demo1' ? <Pause size={12} strokeWidth={2}/> : <Play size={12} strokeWidth={2}/>}
+                </button>
+                <span>猫七七阿姨配音 00：03</span>
+              </div>
+            </td>
+            <td><span className="status-tag success">已完成</span></td>
+            <td>1</td>
+            <td>2025-03-04 12:03</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function CreditsManagement() {
+  const [activeTab, setActiveTab] = useState('records')
+  const [showSendModal, setShowSendModal] = useState(false)
+  const [search, setSearch] = useState('')
+  const [typeFilter, setTypeFilter] = useState('')
 
   return (
     <div className="team-panel">
       <div className="team-tabs">
-        <button className={`team-tab ${tab === 'members' ? 'active' : ''}`} onClick={() => setTab('members')}>团队成员</button>
-        <button className={`team-tab ${tab === 'logs' ? 'active' : ''}`} onClick={() => setTab('logs')}>操作日志</button>
+        <button className={`team-tab ${activeTab === 'records' ? 'active' : ''}`} onClick={() => setActiveTab('records')}>积分记录</button>
+        <button className={`team-tab ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')}>积分设置</button>
       </div>
-      {tab === 'members' ? <MemberList members={members} setMembers={setMembers}/> : <OperationLog/>}
+
+      {activeTab === 'records' && (
+        <div className="team-content">
+          <div className="team-toolbar">
+            <input className="team-search-input" placeholder="请输入账户名称或手机号" value={search} onChange={e => setSearch(e.target.value)}/>
+            <select className="team-select" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+              <option value="">请选择类型</option>
+              <option value="发放">发放</option>
+              <option value="消耗">消耗</option>
+            </select>
+            <button className="btn-query">查询</button>
+            <button className="btn-add-member" onClick={() => setShowSendModal(true)}>积分发放</button>
+          </div>
+          <table className="team-table">
+            <thead>
+              <tr>
+                <th>用户</th><th>变动积分</th><th>变动说明</th><th>变动后余额</th><th>时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div className="member-cell">
+                    <span className="member-avatar member-avatar-letter">张</span>
+                    <div>
+                      <div className="member-name">张三</div>
+                      <div className="member-phone">15927002756</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span className="credits-change plus">+3</span></td>
+                <td>积分发放</td>
+                <td>100</td>
+                <td>2026-04-03 12:00:00</td>
+              </tr>
+            </tbody>
+          </table>
+
+          {showSendModal && <SendCreditsModal onClose={() => setShowSendModal(false)}/>}
+        </div>
+      )}
+
+      {activeTab === 'settings' && <CreditsSettings/>}
+    </div>
+  )
+}
+
+function SendCreditsModal({ onClose }) {
+  const [selectedUser, setSelectedUser] = useState(null)
+  const [amount, setAmount] = useState('')
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="add-member-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          积分发放
+          <button className="picker-close" onClick={onClose}><X size={16}/></button>
+        </div>
+        <div className="modal-body">
+          <div className="modal-field">
+            <label>发放用户</label>
+            <input className="team-search-input" placeholder="请输入账户名称或手机号" style={{ width: '100%' }}/>
+            {selectedUser && (
+              <div className="selected-user-display" style={{ marginTop: '8px' }}>
+                <span className="picker-avatar picker-avatar-letter">张</span> 张三 15927002756
+              </div>
+            )}
+          </div>
+          <div className="modal-field">
+            <label>发放数量</label>
+            <input className="team-search-input" placeholder="请输入发放积分数量" value={amount} onChange={e => setAmount(e.target.value)} style={{ width: '100%' }}/>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn-cancel" onClick={onClose}>取消</button>
+          <button className="btn-confirm">确认</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CreditsSettings() {
+  const [showToast, setShowToast] = useState(false)
+
+  const handleSave = () => {
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 2000)
+  }
+
+  return (
+    <div className="team-content">
+      {showToast && (
+        <div className="copy-toast">
+          <Check size={14} strokeWidth={2}/>
+          保存成功
+        </div>
+      )}
+      <div className="credits-settings">
+        <div className="settings-card">
+          <div className="settings-card-title">注册/每月赠送</div>
+          <div className="settings-input-group">
+            <input className="settings-input" defaultValue="100" placeholder="请输入积分数量"/>
+            <span>积分</span>
+          </div>
+        </div>
+
+        <div className="settings-card">
+          <div className="settings-card-title">消耗设置</div>
+          <div className="settings-grid">
+            <div className="settings-item">
+              <label>图片生成消耗</label>
+              <div className="settings-input-group">
+                <input className="settings-input" defaultValue="100" placeholder="请输入积分"/>
+                <span>积分</span>
+              </div>
+            </div>
+            <div className="settings-item">
+              <label>视频生成消耗</label>
+              <div className="settings-input-group">
+                <input className="settings-input" defaultValue="100" placeholder="请输入积分"/>
+                <span>积分</span>
+              </div>
+            </div>
+            <div className="settings-item">
+              <label>语音合成消耗</label>
+              <div className="settings-input-group">
+                <input className="settings-input" defaultValue="100" placeholder="请输入积分"/>
+                <span>积分</span>
+              </div>
+            </div>
+            <div className="settings-item">
+              <label>音色克隆消耗</label>
+              <div className="settings-input-group">
+                <input className="settings-input" defaultValue="100" placeholder="请输入积分"/>
+                <span>积分</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button className="btn-save-settings" onClick={handleSave}>保存配置</button>
+      </div>
+    </div>
+  )
+}
+
+export default function TeamPanel({ activeMenu }) {
+  const [activeSubTab, setActiveSubTab] = useState('material')
+  const [members, setMembers] = useState(MOCK_MEMBERS)
+
+  return (
+    <div className="team-panel">
+      {activeMenu === 'records' && (
+        <>
+          <div className="team-tabs">
+            <button className={`team-tab ${activeSubTab === 'material' ? 'active' : ''}`} onClick={() => setActiveSubTab('material')}>素材生成</button>
+            <button className={`team-tab ${activeSubTab === 'voice' ? 'active' : ''}`} onClick={() => setActiveSubTab('voice')}>音色克隆</button>
+          </div>
+          {activeSubTab === 'material' && <MaterialGeneration/>}
+          {activeSubTab === 'voice' && <VoiceClone/>}
+        </>
+      )}
+      {activeMenu === 'credits' && <CreditsManagement/>}
+      {activeMenu === 'members' && <MemberList members={members} setMembers={setMembers}/>}
     </div>
   )
 }

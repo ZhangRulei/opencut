@@ -124,8 +124,8 @@ function App() {
       <div className="main-area">
         {activeMenu === '资产' ? (
           <AssetPanel/>
-        ) : activeMenu === '团队' ? (
-          <TeamPanel/>
+        ) : (activeMenu === 'records' || activeMenu === 'credits' || activeMenu === 'members') ? (
+          <TeamPanel activeMenu={activeMenu}/>
         ) : (
           <>
             <TopBar

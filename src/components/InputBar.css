@@ -207,8 +207,25 @@
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
   flex-shrink: 0;
+}
+
+.credit-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.credit-indicator svg {
+  color: var(--icon-muted);
+  flex-shrink: 0;
+}
+
+.credit-indicator span {
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .flat-btn {

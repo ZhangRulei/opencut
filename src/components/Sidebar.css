@@ -290,3 +290,32 @@ body.dark .sidebar-dark-toggle:hover {
   color: #e53e3e;
   background: rgba(229, 62, 62, 0.08);
 }
+
+.sidebar-submenu {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  padding: 4px;
+  min-width: 120px;
+  z-index: 1000;
+  backdrop-filter: blur(16px);
+}
+
+.submenu-item {
+  width: 100%;
+  padding: 7px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.submenu-item:hover {
+  background: var(--bg-hover);
+}

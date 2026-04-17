@@ -10,14 +10,26 @@ const menuItems = [
   { label: '资产', icon: <Folder size={17} strokeWidth={1.5}/>, iconActive: <Folder size={17} strokeWidth={2} fill="currentColor"/> },
   { label: '知识库', icon: <BookOpen size={17} strokeWidth={1.5}/>, iconActive: <BookOpen size={17} strokeWidth={2}/> },
   { label: '技能', icon: <Star size={17} strokeWidth={1.5}/>, iconActive: <Star size={17} strokeWidth={2}/> },
-  { label: '团队', icon: <Users size={17} strokeWidth={1.5}/>, iconActive: <Users size={17} strokeWidth={2}/> },
+  {
+    label: '团队',
+    icon: <Users size={17} strokeWidth={1.5}/>,
+    iconActive: <Users size={17} strokeWidth={2}/>,
+    subMenu: [
+      { label: '生成记录', value: 'records' },
+      { label: '积分管理', value: 'credits' },
+      { label: '成员管理', value: 'members' }
+    ]
+  },
 ]
 
 export default function Sidebar({ activeMenu, onMenuChange, darkMode, onToggleDark, onLogout }) {
   const [logoError, setLogoError] = useState(false)
   const [avatarOpen, setAvatarOpen] = useState(false)
   const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 })
+  const [showTeamMenu, setShowTeamMenu] = useState(false)
+  const [teamMenuPos, setTeamMenuPos] = useState({ top: 0, left: 0 })
   const avatarRef = useRef(null)
+  const teamRef = useRef(null)
 
   useEffect(() => {
     if (!avatarOpen) return
@@ -30,12 +42,29 @@ export default function Sidebar({ activeMenu, onMenuChange, darkMode, onToggleDa
     return () => document.removeEventListener('mousedown', handler)
   }, [avatarOpen])
 
+  useEffect(() => {
+    if (!showTeamMenu) return
+    const handler = (e) => {
+      if (teamRef.current && !teamRef.current.contains(e.target)) {
+        setShowTeamMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showTeamMenu])
+
   const handleAvatarClick = () => {
     if (!avatarOpen && avatarRef.current) {
       const rect = avatarRef.current.getBoundingClientRect()
       setPopoverPos({ top: rect.top, left: rect.right + 8 })
     }
     setAvatarOpen(v => !v)
+  }
+
+  const handleTeamHover = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setTeamMenuPos({ top: rect.top, left: rect.right + 8 })
+    setShowTeamMenu(true)
   }
 
   return (
@@ -50,19 +79,40 @@ export default function Sidebar({ activeMenu, onMenuChange, darkMode, onToggleDa
 
       <nav className="sidebar-nav">
         {menuItems.map((item) => {
-          const isActive = activeMenu === item.label
+          const isActive = activeMenu === item.label || (item.subMenu && item.subMenu.some(sub => activeMenu === sub.value))
           return (
-            <button
-              key={item.label}
-              className={`nav-item ${isActive ? 'active' : ''}`}
-              onClick={() => onMenuChange(item.label)}
-              title={item.label}
-            >
-              <span className="nav-icon">
-                {isActive ? item.iconActive : item.icon}
-              </span>
-              <span className="nav-label">{item.label}</span>
-            </button>
+            <div key={item.label} ref={item.label === '团队' ? teamRef : null}>
+              <button
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                onClick={() => !item.subMenu && onMenuChange(item.label)}
+                onMouseEnter={item.subMenu ? handleTeamHover : undefined}
+                onMouseLeave={item.subMenu ? () => setShowTeamMenu(false) : undefined}
+                title={item.label}
+              >
+                <span className="nav-icon">
+                  {isActive ? item.iconActive : item.icon}
+                </span>
+                <span className="nav-label">{item.label}</span>
+              </button>
+              {item.subMenu && showTeamMenu && (
+                <div
+                  className="sidebar-submenu"
+                  style={{ position: 'fixed', top: teamMenuPos.top, left: teamMenuPos.left }}
+                  onMouseEnter={() => setShowTeamMenu(true)}
+                  onMouseLeave={() => setShowTeamMenu(false)}
+                >
+                  {item.subMenu.map(sub => (
+                    <button
+                      key={sub.value}
+                      className="submenu-item"
+                      onClick={() => { onMenuChange(sub.value); setShowTeamMenu(false) }}
+                    >
+                      {sub.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           )
         })}
       </nav>

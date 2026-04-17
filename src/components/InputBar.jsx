@@ -405,6 +405,13 @@ export default function InputBar({ onGenerate, reEditData, onReEditDone }) {
           </div>
 
           <div className="toolbar-right">
+            <div className="credit-indicator">
+              <svg viewBox="0 0 14 14" fill="none" width="14" height="14">
+                <path d="M7 1.5L8.5 5.5L12.5 6L9.5 9L10.5 13L7 10.5L3.5 13L4.5 9L1.5 6L5.5 5.5L7 1.5Z" fill="currentColor" opacity="0.15"/>
+                <path d="M7 1.5L8.5 5.5L12.5 6L9.5 9L10.5 13L7 10.5L3.5 13L4.5 9L1.5 6L5.5 5.5L7 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+              </svg>
+              <span>3</span>
+            </div>
             <button className={`send-btn ${text.trim() || motionText.trim() ? 'ready' : ''}`} onClick={handleGenerate}>
               <Sparkles size={15} strokeWidth={1.9}/>
             </button>
